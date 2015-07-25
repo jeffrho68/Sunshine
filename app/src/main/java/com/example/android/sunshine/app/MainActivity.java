@@ -1,12 +1,19 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +42,22 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
+        } else if (item.getItemId() == R.id.action_view_location_map) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String loc = prefs.getString(getString(R.string.key_location_pref), getString(R.string.default_location_pref));
+
+            Uri uri = Uri.parse("geo:0,0").buildUpon().appendQueryParameter("q", loc).build();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(uri);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Log.e(LOG_TAG, "Could not start activity with Map intent.");
+            }
+
         }
 
         return super.onOptionsItemSelected(item);

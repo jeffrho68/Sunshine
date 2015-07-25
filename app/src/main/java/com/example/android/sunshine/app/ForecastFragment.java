@@ -1,8 +1,11 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -12,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -49,23 +53,30 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        startFetchWeatherTask();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] strForecasts = {"Today - Sunny - 88/63",
-                "Tommorow - Foggy - 70/46",
-                "Weds - Cloudy - 72/63",
-                "Thurs - Rainy - 64/41",
-                "Fri - Foggy - 70/46",
-                "Sat - Sunny - 76/68",
-                "Sun - Sunny - 82/66"};
-
-        ArrayList<String> forecasts = new ArrayList<String>(Arrays.asList(strForecasts));
-
-        mForecastListAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast_textview, forecasts);
+        mForecastListAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast_textview, new ArrayList<String>());
         mForecastListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastListAdapter);
+        mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               String text =(String)parent.getItemAtPosition(position);
+               //Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("detail", text);
+                startActivity(intent);
+
+            }
+        });
 
         return rootView;
     }
@@ -87,8 +98,13 @@ public class ForecastFragment extends Fragment {
     }
 
     private void startFetchWeatherTask() {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String loc = prefs.getString(getString(R.string.key_location_pref), getString(R.string.default_location_pref));
+        String units = prefs.getString(getString(R.string.key_units_pref), getString(R.string.default_units_pref));
+
         FetchWeatherTask fwt = new FetchWeatherTask();
-        fwt.execute("66061");
+        fwt.execute(loc, units);
     }
 
     /* The date/time conversion code is going to be moved outside the asynctask later,
@@ -201,14 +217,19 @@ public class ForecastFragment extends Fragment {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             int count = params.length;
-            if (count == 0) {
-                Log.e(LOG_TAG, "Error postalCode parameter is required");
+            if (count != 2) {
+                Log.e(LOG_TAG, "Error postalCode and units parameters are required");
                 return null;
             }
 
             String postalCode = params[0];
             if (postalCode == null) {
                 Log.e(LOG_TAG, "Error postalCode parameter is null");
+                return null;
+            }
+            String units = params[1];
+            if (units == null) {
+                Log.e(LOG_TAG, "Error units parameter is null");
                 return null;
             }
 
@@ -224,7 +245,7 @@ public class ForecastFragment extends Fragment {
                 Uri uri = Uri.parse("http://api.openweathermap.org/data/2.5/forecast/daily").buildUpon()
                     .appendQueryParameter("q", postalCode)
                     .appendQueryParameter("mode", "json")
-                    .appendQueryParameter("units", "imperial")
+                    .appendQueryParameter("units", units)
                     .appendQueryParameter("cnt", "7")
                     .build();
                 Log.i(LOG_TAG,uri.toString());
