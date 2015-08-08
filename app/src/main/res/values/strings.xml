@@ -12,7 +12,9 @@
     <string name="default_location_pref">66061</string>
     <string name="title_units_pref">Units</string>
     <string name="key_units_pref">units</string>
-    <string name="default_units_pref">metric</string>
+    <string name="default_units_pref">@string/metric_units_pref</string>
+    <string name="imperial_units_pref">imperial</string>
+    <string name="metric_units_pref">metric</string>
     <string name="action_share">Share</string>
 
 </resources>
