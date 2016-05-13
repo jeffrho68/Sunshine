@@ -6,6 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -13,8 +14,48 @@ import android.widget.TextView;
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
  */
 public class ForecastAdapter extends CursorAdapter {
+
+    // View types
+    private final int VIEW_TYPE_TODAY = 0;
+    private final int VIEW_TYPE_FUTURE_DAY = 1;
+
+    /**
+     * ViewHolder class
+     */
+    public class ViewHolder {
+        TextView mTvDate;
+        TextView mTvForecast;
+        TextView mTvHigh;
+        TextView mTvLow;
+        ImageView mIvIcon;
+
+        public ViewHolder(View view) {
+            mTvDate = (TextView)view.findViewById(R.id.list_item_date_textview);
+            mTvForecast = (TextView)view.findViewById(R.id.list_item_forecast_textview);
+            mTvHigh = (TextView)view.findViewById(R.id.list_item_high_textview);
+            mTvLow = (TextView)view.findViewById(R.id.list_item_low_textview);
+            mIvIcon = (ImageView)view.findViewById(R.id.list_item_icon);
+        }
+    }
+
+    /**
+     * Constructor.
+     * @param context
+     * @param c
+     * @param flags
+     */
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position == 0 ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
     }
 
     /**
@@ -22,7 +63,8 @@ public class ForecastAdapter extends CursorAdapter {
      */
     private String formatHighLows(double high, double low) {
         boolean isMetric = Utility.isMetric(mContext);
-        String highLowStr = Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
+        String highLowStr = Utility.formatTemperature(mContext, high, isMetric)
+                + "/" + Utility.formatTemperature(mContext, low, isMetric);
         return highLowStr;
     }
 
@@ -45,7 +87,16 @@ public class ForecastAdapter extends CursorAdapter {
      */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_forecast, parent, false);
+
+        int viewType = getItemViewType(cursor.getPosition());
+        int layoutId;
+        if (viewType == VIEW_TYPE_TODAY) {
+            layoutId = R.layout.list_item_forecast_today;
+        } else {
+            layoutId = R.layout.list_item_forecast;
+        }
+        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
+        view.setTag(new ViewHolder(view));
 
         return view;
     }
@@ -58,7 +109,29 @@ public class ForecastAdapter extends CursorAdapter {
         // our view is pretty simple here --- just a text view
         // we'll keep the UI functional with a simple (and slow!) binding.
 
-        TextView tv = (TextView)view;
-        tv.setText(convertCursorRowToUXFormat(cursor));
+        ViewHolder vh = (ViewHolder)view.getTag();
+
+        vh.mTvForecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+
+        vh.mTvHigh.setText(Utility.formatTemperature(mContext,
+                cursor.getInt(ForecastFragment.COL_WEATHER_MAX_TEMP),
+                Utility.isMetric(context)));
+
+        vh.mTvLow.setText(Utility.formatTemperature(mContext,
+                cursor.getInt(ForecastFragment.COL_WEATHER_MIN_TEMP),
+                Utility.isMetric(context)));
+
+        vh.mTvDate.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
+
+        int weatherCondId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        if (getItemViewType(cursor.getPosition()) == VIEW_TYPE_TODAY) {
+            vh.mIvIcon.setImageResource(Utility.getArtResourceForWeatherCondition(weatherCondId));
+        } else {
+            vh.mIvIcon.setImageResource(Utility.getIconResourceForWeatherCondition(weatherCondId));
+        }
+
+
     }
+
+
 }
