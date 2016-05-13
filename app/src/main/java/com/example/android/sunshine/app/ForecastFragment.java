@@ -1,6 +1,5 @@
 package com.example.android.sunshine.app;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,9 +66,22 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
 
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
+    }
+
 
     private ForecastAdapter mForecastAdapter;
     private ListView mForecastListView;
+    private Callback mCallback = null;
 
     public ForecastFragment() {
     }
@@ -83,6 +95,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (getActivity() instanceof Callback) {
+            mCallback = (Callback)getActivity();
+        } else {
+            throw new RuntimeException("Parent activity must implement ForecastFragment.Callback");
+        }
         getLoaderManager().initLoader(WEATHER_LOADER_ID, null, this);
     }
 
@@ -102,10 +119,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 Cursor cur = (Cursor)parent.getItemAtPosition(position);
                 if (cur != null) {
                     String loc = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    intent.setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(loc,
-                            cur.getLong(COL_WEATHER_DATE)));
-                    startActivity(intent);
+                    Uri dateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(loc,
+                            cur.getLong(COL_WEATHER_DATE));
+
+                    mCallback.onItemSelected(dateUri);
                 }
              }
         });

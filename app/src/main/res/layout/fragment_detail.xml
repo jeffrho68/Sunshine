@@ -31,12 +31,12 @@
                 android:id="@+id/day_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today"/>
+                />
             <TextView
                 android:id="@+id/date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="May 13"/>
+                />
         </LinearLayout>
 
         <!-- day + temps layout -->
@@ -58,12 +58,12 @@
                     android:id="@+id/high_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="76"/>
+                    />
                 <TextView
                     android:id="@+id/low_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="52"/>
+                    />
            </LinearLayout>
 
             <!-- icon + forecast layout -->
@@ -78,13 +78,11 @@
                     android:id="@+id/icon_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher"
                     />
                 <TextView
                     android:id="@+id/forecast_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Clear"
                     />
 
             </LinearLayout>
@@ -96,21 +94,18 @@
             android:id="@+id/humidity_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Humidity: 53%"
             />
         <TextView
             android:id="@+id/wind_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Wind: 5 mph SW"
             />
         <TextView
             android:id="@+id/pressure_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Pressure: 56 psi"
             />
 
 

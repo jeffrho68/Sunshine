@@ -61,6 +61,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int COL_WEATHER_DEGREES = 8;
     private static final int COL_WEATHER_CONDITION_ID = 9;
 
+    public static final String DETAIL_URI_KEY = "detailUri";
+
     /**
      * ViewHolder class
      */
@@ -88,7 +90,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
     }
 
-    private String mDetailUri;
+    private Uri mDetailUri;
 
     private ShareActionProvider mShareActionProvider;
 
@@ -100,6 +102,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      * Constrcutor.
      */
     public DetailFragment() {
+
         setHasOptionsMenu(true);
     }
 
@@ -127,7 +130,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mDetailUri = getActivity().getIntent().getDataString();
+        //mDetailUri = getActivity().getIntent().getDataString();
+
+        Bundle args = getArguments();
+        if (args != null) {
+            mDetailUri = args.getParcelable(DETAIL_URI_KEY);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         mHolder = new ViewHolder(rootView);
@@ -136,8 +144,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), Uri.parse(mDetailUri),
-                DETAIL_COLUMNS, null, null, null);
+
+        if (mDetailUri != null) {
+            return new CursorLoader(getActivity(), mDetailUri, DETAIL_COLUMNS, null, null, null);
+        } else {
+            return null;
+        }
+
     }
 
     @Override
@@ -190,6 +203,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     }
 
+    void onLocationChanged( String newLocation ) {
+        // replace the uri, since the location has changed
+        Uri uri = mDetailUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mDetailUri = updatedUri;
+            getLoaderManager().restartLoader(DETAILS_LOADER_ID, null, this);
+        }
+    }
+
     private Intent createShareIntent() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("plain/text");
@@ -197,4 +221,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         return intent;
     }
+
+
 }
