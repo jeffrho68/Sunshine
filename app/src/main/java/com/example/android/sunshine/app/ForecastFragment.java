@@ -87,6 +87,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private int mCurPos = 0;
 
+    private boolean mUseTodayView = true;
+
     public ForecastFragment() {
     }
 
@@ -94,6 +96,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    public void setUseTodayView(boolean flag) {
+        mUseTodayView = flag;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.setUseTodayView(mUseTodayView);
+        }
     }
 
     @Override
@@ -139,6 +148,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
              }
         });
+
+        mForecastAdapter.setUseTodayView(mUseTodayView);
 
         return rootView;
     }
