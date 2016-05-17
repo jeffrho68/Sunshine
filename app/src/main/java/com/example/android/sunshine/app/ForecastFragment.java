@@ -66,6 +66,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
 
+    private static final String CURRENT_POSITION_KEY = "currentPosition";
+
     /**
      * A callback interface that all activities containing this fragment must
      * implement. This mechanism allows activities to be notified of item
@@ -82,6 +84,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private ForecastAdapter mForecastAdapter;
     private ListView mForecastListView;
     private Callback mCallback = null;
+
+    private int mCurPos = 0;
 
     public ForecastFragment() {
     }
@@ -108,6 +112,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+
+        if (savedInstanceState != null) {
+            mCurPos = savedInstanceState.getInt(CURRENT_POSITION_KEY);
+        }
+
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
         mForecastListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
@@ -116,6 +125,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //Save position
+                mCurPos = position;
+
                 Cursor cur = (Cursor)parent.getItemAtPosition(position);
                 if (cur != null) {
                     String loc = Utility.getPreferredLocation(getActivity());
@@ -130,6 +143,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(CURRENT_POSITION_KEY, mCurPos);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -162,6 +180,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mForecastAdapter.swapCursor(cursor);
+        mForecastListView.smoothScrollToPosition(mCurPos);
     }
 
     @Override
