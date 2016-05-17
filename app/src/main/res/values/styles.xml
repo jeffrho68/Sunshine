@@ -5,4 +5,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="ListItem">
+        <item name="android:background">@drawable/touch_selector</item>
+    </style>
+
+    <style name="ListView">
+        <item name="android:choiceMode">none</item>
+    </style>
 </resources>

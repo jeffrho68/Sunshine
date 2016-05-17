@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Override the list view choice mode for tablets -->
+    <style name="ListView">
+        <item name="android:choiceMode">singleChoice</item>
+    </style>
+</resources>
