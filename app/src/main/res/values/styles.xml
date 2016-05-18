@@ -29,4 +29,40 @@
     <style name="ListView">
         <item name="android:choiceMode">none</item>
     </style>
+
+    <style name="CondensedTextParent">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="ForecastLargeText" parent="CondensedTextParent">
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+    </style>
+
+    <style name="ForecastSmallText" parent="CondensedTextParent">
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+    </style>
+
+    <style name="TodayTextParent">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="TodayHighText" parent="TodayTextParent">
+        <item name="android:textSize">72sp</item>
+    </style>
+
+    <style name="TodayLowText" parent="TodayTextParent">
+        <item name="android:textSize">36sp</item>
+    </style>
+
+    <style name="TodayDateText" parent="TodayTextParent">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <style name="TodayForecastText" parent="TodayTextParent">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+
 </resources>
