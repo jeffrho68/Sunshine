@@ -5,4 +5,13 @@
     <style name="ListView">
         <item name="android:choiceMode">singleChoice</item>
     </style>
+
+    <!-- Override the DetailsDateText for tablets -->
+    <style name="DetailsDateText">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/details_grey</item>
+    </style>
+
+
 </resources>
