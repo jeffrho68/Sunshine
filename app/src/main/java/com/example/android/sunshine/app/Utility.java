@@ -185,6 +185,46 @@ public class Utility {
     }
 
     /**
+     * Get acessibility text for the wind speed.
+     * @param context
+     * @param windSpeed
+     * @param degrees
+     * @return
+     */
+    public static String getWindDescription(Context context, float windSpeed, float degrees) {
+        int windFormat;
+        if (Utility.isMetric(context)) {
+            windFormat = R.string.format_wind_kmh;
+        } else {
+            windFormat = R.string.format_wind_mph;
+            windSpeed = .621371192237334f * windSpeed;
+        }
+
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
+        // You know what's fun, writing really long if/else statements with tons of possible
+        // conditions.  Seriously, try it!
+        String direction = "Unknown";
+        if (degrees >= 337.5 || degrees < 22.5) {
+            direction = context.getString(R.string.north_desc);
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            direction = context.getString(R.string.northeast_desc);
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            direction = context.getString(R.string.east_desc);
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            direction = context.getString(R.string.southeast_desc);
+        } else if (degrees >= 157.5 && degrees < 202.5) {
+            direction = context.getString(R.string.south_desc);
+        } else if (degrees >= 202.5 && degrees < 247.5) {
+            direction = context.getString(R.string.southwest_desc);
+        } else if (degrees >= 247.5 && degrees < 292.5) {
+            direction = context.getString(R.string.west_desc);
+        } else if (degrees >= 292.5 && degrees < 337.5) {
+            direction = context.getString(R.string.northwest_desc);
+        }
+        return String.format(context.getString(windFormat), windSpeed, direction);
+    }
+
+    /**
      * Helper method to provide the icon resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
      * @param weatherId from OpenWeatherMap API response
@@ -252,5 +292,36 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+    /**
+     * Acessibility text for the temprature.
+     * @param context
+     * @param temp
+     * @param isHigh
+     * @param isMetric
+     * @return
+     */
+    public static String getTemperatureDescription(Context context, String temp,
+                                                   boolean isHigh, boolean isMetric) {
+
+        String desc;
+
+        if (isHigh) {
+            desc = context.getString(R.string.high_temp_desc);
+        } else {
+            desc = context.getString(R.string.low_temp_desc);
+        }
+
+        desc += temp;
+
+        if (isMetric) {
+            desc += context.getString(R.string.metric_temp_desc);
+        } else {
+            desc += context.getString(R.string.imperial_temp_desc);
+        }
+
+        return desc;
+
     }
 }

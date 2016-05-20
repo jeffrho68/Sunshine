@@ -117,15 +117,22 @@ public class ForecastAdapter extends CursorAdapter {
 
         ViewHolder vh = (ViewHolder)view.getTag();
 
-        vh.mTvForecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+        String weatherDesc = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
+        vh.mTvForecast.setText(weatherDesc);
+        vh.mTvForecast.setContentDescription(context.getString(R.string.forecast_desc) +
+                weatherDesc);
 
-        vh.mTvHigh.setText(Utility.formatTemperature(mContext,
-                cursor.getInt(ForecastFragment.COL_WEATHER_MAX_TEMP),
-                Utility.isMetric(context)));
+        int high = cursor.getInt(ForecastFragment.COL_WEATHER_MAX_TEMP);
+        int low = cursor.getInt(ForecastFragment.COL_WEATHER_MIN_TEMP);
+        boolean isMetric = Utility.isMetric(context);
 
-        vh.mTvLow.setText(Utility.formatTemperature(mContext,
-                cursor.getInt(ForecastFragment.COL_WEATHER_MIN_TEMP),
-                Utility.isMetric(context)));
+        vh.mTvHigh.setText(Utility.formatTemperature(mContext, high, isMetric));
+        vh.mTvHigh.setContentDescription(
+                Utility.getTemperatureDescription(mContext, vh.mTvHigh.getText().toString(), true, isMetric));
+
+        vh.mTvLow.setText(Utility.formatTemperature(mContext, low, isMetric));
+        vh.mTvLow.setContentDescription(
+                Utility.getTemperatureDescription(mContext, vh.mTvLow.getText().toString(), false, isMetric));
 
         vh.mTvDate.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
 
@@ -135,7 +142,6 @@ public class ForecastAdapter extends CursorAdapter {
         } else {
             vh.mIvIcon.setImageResource(Utility.getIconResourceForWeatherCondition(weatherCondId));
         }
-
 
     }
 

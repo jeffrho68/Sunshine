@@ -7,11 +7,12 @@
     tools:context="com.example.android.sunshine.app.DetailFragment"
     >
 
-    <!-- main scroll container -->
+    <!-- main scroll container; clickable for accessibility only -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:clickable="true"
         >
         <!-- day + date -->
         <LinearLayout

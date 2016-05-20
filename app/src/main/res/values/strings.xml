@@ -47,4 +47,18 @@
     <!-- Humidity format CHAR LIMIT=25]-->
     <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g>%%</string>
 
+    <!-- Accessibility (talkback) content descriptions -->
+    <string name="high_temp_desc">High of\u0020</string>
+    <string name="low_temp_desc">Low of\u0020</string>
+    <string name="metric_temp_desc">\u0020celcius</string>
+    <string name="imperial_temp_desc">\u0020fahrenheit</string>
+    <string name="north_desc">North</string>
+    <string name="south_desc">South</string>
+    <string name="east_desc">East</string>
+    <string name="west_desc">West</string>
+    <string name="northeast_desc">Northeast</string>
+    <string name="southeast_desc">Southeast</string>
+    <string name="northwest_desc">Northwest</string>
+    <string name="southwest_desc">Southwest</string>
+    <string name="forecast_desc">Forecast:\u0020</string>
 </resources>

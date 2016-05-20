@@ -162,13 +162,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         String monthDayString = Utility.getFormattedMonthDay(getActivity(), date);
         String weatherDescription = data.getString(COL_WEATHER_DESC);
 
+        double maxTemp = data.getDouble(COL_WEATHER_MAX_TEMP);
+        double minTemp = data.getDouble(COL_WEATHER_MIN_TEMP);
         boolean isMetric = Utility.isMetric(getActivity());
 
-        String high = Utility.formatTemperature(getActivity(),
-                data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+        String high = Utility.formatTemperature(getActivity(), maxTemp, isMetric);
+        String highContent = Utility.getTemperatureDescription(getActivity(), high, true, isMetric);
 
-        String low = Utility.formatTemperature(getActivity(),
-                data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+        String low = Utility.formatTemperature(getActivity(),minTemp, isMetric);
+        String lowContent = Utility.getTemperatureDescription(getActivity(), low, false, isMetric);
 
         float windSpeed = data.getFloat(COL_WEATHER_WIND_SPEED);
         float degrees = data.getFloat(COL_WEATHER_DEGREES);
@@ -178,8 +180,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mHolder.mTvDay.setText(dayString);
         mHolder.mTvDate.setText(monthDayString);
         mHolder.mTvHigh.setText(high);
+        mHolder.mTvHigh.setContentDescription(highContent);
         mHolder.mTvLow.setText(low);
+        mHolder.mTvLow.setContentDescription(lowContent);
         mHolder.mTvForecast.setText(weatherDescription);
+        mHolder.mTvForecast.setContentDescription(getString(R.string.forecast_desc) +
+                weatherDescription);
 
         int weatherCondId = data.getInt(COL_WEATHER_CONDITION_ID);
         mHolder.mIvIcon.setImageResource(Utility.getArtResourceForWeatherCondition(weatherCondId));
@@ -187,6 +193,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mHolder.mTvPressure.setText(getString(R.string.format_pressure, pressure));
         mHolder.mTvHumidity.setText(getString(R.string.format_humidity, humidity));
         mHolder.mTvWind.setText(Utility.getFormattedWind(getActivity(), windSpeed, degrees));
+        mHolder.mTvWind.setContentDescription(Utility.getWindDescription(getActivity(),
+                windSpeed, degrees));
 
         //For share intent
         String dateString = Utility.formatDate(date);
