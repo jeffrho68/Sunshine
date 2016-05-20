@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.service.SunshineService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -169,7 +171,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
-            startFetchWeatherTask();
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -199,14 +201,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(null);
     }
 
-    private void startFetchWeatherTask() {
-        FetchWeatherTask fwt = new FetchWeatherTask(getActivity());
-        String loc = Utility.getPreferredLocation(getActivity());
-        fwt.execute(loc);
+    private void updateWeather() {
+        //FetchWeatherTask fwt = new FetchWeatherTask(getActivity());
+        //String loc = Utility.getPreferredLocation(getActivity());
+        //fwt.execute(loc);
+
+        //Start an intent service to fetch the weather.
+        Intent intent = new Intent(getActivity(), SunshineService.class);
+        intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA,
+                Utility.getPreferredLocation(getActivity()));
+        getActivity().startService(intent);
     }
 
+
     public void onLocationChanged() {
-        startFetchWeatherTask();
+        updateWeather();
         getLoaderManager().restartLoader(WEATHER_LOADER_ID, null, this);
     }
 
