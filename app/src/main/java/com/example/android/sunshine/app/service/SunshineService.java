@@ -1,8 +1,10 @@
 package com.example.android.sunshine.app.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -343,5 +345,22 @@ public class SunshineService extends IntentService {
         locationCursor.close();
 
         return locationId;
+    }
+
+    /**
+     * BroadcastReceiver to listen for alarms from the system to wake up the service.
+     */
+    public static class AlarmReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.i("AlarmReceiver", "Received alarm");
+            Intent serviceIntent = new Intent(context, SunshineService.class);
+            intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA,
+                    intent.getStringExtra(SunshineService.LOCATION_QUERY_EXTRA));
+            context.startService(serviceIntent);
+
+        }
     }
 }
